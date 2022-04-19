@@ -1,4 +1,4 @@
-//se obtienen Obtenemos los datos del local storage del contenido del carrito y lo guardo en una variable
+//Obtenemos los datos del local storage del contenido del carrito y lo guardo en una variable
 let elementosLs = localStorage.getItem("carritoCompras");
 let carritoCompras = [];
 let total1 = 0;
@@ -71,6 +71,9 @@ function pintarproductosInventario(data) {
   });
 }
 
+
+
+
 filtraProductos(".filtro",".card")
 
 function filtraProductos(input,selector) {
@@ -119,6 +122,8 @@ function agregarProducto(element) {
   localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
 }
 
+
+
 if (elementosLs) {
   carritoCompras = JSON.parse(elementosLs);
   pintarCarrito();
@@ -127,7 +132,9 @@ if (elementosLs) {
 
 //   tbody.innerText = "NO EXISTE PRODUCTOS EN SU CARRITO";}
 
-///FUNCION PARA PINTAR LOS PRODUCTOS EN EL DOM
+
+
+///FUNCION PARA PINTAR LOS PRODUCTOS DEL CARRITO EN UNA TABLA
 
 function pintarCarrito() {
   tbody.innerText = "";
@@ -211,6 +218,8 @@ function subtotalCompra() {
   return subtotal;
 }
 
+
+
 function calcularTotal() {
   if (subtotal !== 0) {
     if (subtotal >= 300) {
@@ -238,6 +247,9 @@ else {
   console.log(`cantidad de Articulos comprados ${carritoCompras.length}`);
   borrarCarrito()
 }
+
+
+
 
 function borrarCarrito() {
   carritoCompras = [];
