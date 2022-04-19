@@ -17,7 +17,7 @@ tbody.innerText = "NO EXISTE PRODUCTOS EN SU CARRITO";
 const footerCarrito = document.querySelector("footer__cart");
 const total = document.querySelector("#total_cart");
 const cantidadProductos = document.querySelector("#carrito_cantidad");
-const busqueda = document.getElementById("search");
+const busqueda = document.querySelector("#search")
 
 const fetchData = async () => {
   const res = await fetch("data.json");
@@ -59,13 +59,7 @@ function pintarproductosInventario(data) {
     botonComprar.setAttribute("marcador", element.id);
     botonComprar.setAttribute("data-pushbar-target", "pushbar-carrito");
     botonComprar.addEventListener("click", () => agregarProducto(element));
-    //busqueda.addEventListener("input", busquedaProductos(data));
-    busqueda.addEventListener("input", () => {
-      pr = data.filter((p) => p.nombre === busqueda.value.toUpperCase());
-      console.log(pr);
-
-      pintarproductosInventario(pr);
-    });
+    
 
     productoCard.appendChild(productoImagen);
     productoCard.appendChild(productoCardTitulo);
@@ -77,7 +71,21 @@ function pintarproductosInventario(data) {
   });
 }
 
+filtraProductos(".filtro",".card")
 
+function filtraProductos(input,selector) {
+  
+ document.addEventListener("keyup",(e) =>{
+      if(e.target.matches(input)){
+          if(e.key == 'Escape') e.target.value = '';
+
+          // Filtro para buscar las coincidencias
+         document.querySelectorAll(selector).forEach(el =>el.textContent.includes(e.target.value.toUpperCase())
+              ?el.classList.remove('filtrados')
+              :el.classList.add('filtrados'))
+    }
+  })
+}
 
 //FUNCION PARA AGREGAR PRODUCTOS AL CARRITO DE COMPRAS
 
@@ -148,7 +156,7 @@ function pintarCarrito() {
 
     deleteProducto.addEventListener("click", () => eliminarProducto(product));
 
-    cantidadProductos.textContent = cantidadProducts();
+    cantidadProductos.innerText = cantidadProducts();
     total.textContent = `Total $ ${subtotalCompra()}`;
 
     botonFinalizarCompra.classList.add("boton__total", "boton__carrito");
@@ -171,17 +179,9 @@ function pintarCarrito() {
     productosCarrito.appendChild(bottonBorrar);
   });
 
-  cantidadProducts();
 }
 
-//funcion para Obtener la cantidad de productos comprados
 
-// function buscandoProducto (data){
-//   let nombreBuscado= busqueda.value
-//  let productosEncontrados= data.filter(product => product.nombre === nombreBuscado)
-// console.log(productosEncontrados);
-
-// }
 function cantidadProducts() {
   let totalItems = 0;
   totalItems = carritoCompras.reduce(
@@ -195,39 +195,56 @@ function eliminarProducto(product) {
   let indexDelete = carritoCompras.indexOf(product);
   carritoCompras.splice(indexDelete, 1);
   localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
-  total.textContent = "";
+  total.textContent = 0;
+  cantidadProductos.textContent=""
   pintarCarrito();
   subtotalCompra();
+  
+  
 }
 
 function subtotalCompra() {
-  total1 = carritoCompras.reduce(
+  subtotal = carritoCompras.reduce(
     (acumulador, elemento) => acumulador + elemento.precio * elemento.cantidad,
     0
   );
-  return total1;
+  return subtotal;
 }
 
 function calcularTotal() {
-  total1 >= 300 && total1 !== null
-    ? swal({ title: "Tu compra incluye envio", icon: "success" })
-    : (swal({
-        title: "La compra actual no incluye envio gratis",
-        text: "El costo del Envio es de $100 a cualquier lugar de la Republica Mexicana",
-        icon: "warning",
-      }),
-      (total1 = total1 + 100));
-  total.textContent = `Total de ${total1}`;
-  console.log(`Total de su compra: ${total1}`);
+  if (subtotal !== 0) {
+    if (subtotal >= 300) {
+      swal({ title: "Tu compra incluye envio", icon: "success" })
+    
+    }
+    else{
+      (swal({
+      title: "La compra actual no incluye envio gratis",
+      text: "Se agregar un costo de envio de $100 a cualquier lugar de la Republica Mexicana",
+      icon: "warning"
+    }))
+     subtotal= subtotal + 100
+     
+    }
+} 
+else {
+    swal({ title: "No tienes agregados productos", icon: "warning" })
+    
+  }
+  
+ 
+  total.textContent = `Total de ${subtotal}`;
+  console.log(`Total de su compra: ${subtotal}`);
   console.log(`cantidad de Articulos comprados ${carritoCompras.length}`);
+  borrarCarrito()
 }
 
 function borrarCarrito() {
   carritoCompras = [];
+ 
+  total.textContent = 0;
 
-  total.textContent = null;
-
-  cantidadProductos.textContent = null;
+  cantidadProductos.textContent = 0;
   localStorage.clear();
   pintarCarrito();
 }

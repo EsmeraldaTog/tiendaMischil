@@ -86,6 +86,9 @@ button {
   font-size: 16px;
   font-weight:  bolder;
 }
+.filtrados{
+  display: none;
+}
 .boton__compra{
   font-weight: 600;
   font-size: 25px;
