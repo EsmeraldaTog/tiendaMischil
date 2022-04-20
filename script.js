@@ -17,7 +17,7 @@ tbody.innerText = "NO EXISTE PRODUCTOS EN SU CARRITO";
 const footerCarrito = document.querySelector("footer__cart");
 const total = document.querySelector("#total_cart");
 const cantidadProductos = document.querySelector("#carrito_cantidad");
-const busqueda = document.querySelector("#search")
+const busqueda = document.querySelector("#search");
 
 const fetchData = async () => {
   const res = await fetch("data.json");
@@ -59,7 +59,6 @@ function pintarproductosInventario(data) {
     botonComprar.setAttribute("marcador", element.id);
     botonComprar.setAttribute("data-pushbar-target", "pushbar-carrito");
     botonComprar.addEventListener("click", () => agregarProducto(element));
-    
 
     productoCard.appendChild(productoImagen);
     productoCard.appendChild(productoCardTitulo);
@@ -71,23 +70,23 @@ function pintarproductosInventario(data) {
   });
 }
 
+filtraProductos(".filtro", ".card");
 
+function filtraProductos(input, selector) {
+  document.addEventListener("keyup", (e) => {
+    if (e.target.matches(input)) {
+      if (e.key == "Escape") e.target.value = "";
 
-
-filtraProductos(".filtro",".card")
-
-function filtraProductos(input,selector) {
-  
- document.addEventListener("keyup",(e) =>{
-      if(e.target.matches(input)){
-          if(e.key == 'Escape') e.target.value = '';
-
-          // Filtro para buscar las coincidencias
-         document.querySelectorAll(selector).forEach(el =>el.textContent.includes(e.target.value.toUpperCase())
-              ?el.classList.remove('filtrados')
-              :el.classList.add('filtrados'))
+      // Filtro para buscar las coincidencias
+      document
+        .querySelectorAll(selector)
+        .forEach((el) =>
+          el.textContent.includes(e.target.value.toUpperCase())
+            ? el.classList.remove("filtrados")
+            : el.classList.add("filtrados")
+        );
     }
-  })
+  });
 }
 
 //FUNCION PARA AGREGAR PRODUCTOS AL CARRITO DE COMPRAS
@@ -122,8 +121,6 @@ function agregarProducto(element) {
   localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
 }
 
-
-
 if (elementosLs) {
   carritoCompras = JSON.parse(elementosLs);
   pintarCarrito();
@@ -131,8 +128,6 @@ if (elementosLs) {
 // else {
 
 //   tbody.innerText = "NO EXISTE PRODUCTOS EN SU CARRITO";}
-
-
 
 ///FUNCION PARA PINTAR LOS PRODUCTOS DEL CARRITO EN UNA TABLA
 
@@ -185,9 +180,7 @@ function pintarCarrito() {
     productosCarrito.appendChild(botonFinalizarCompra);
     productosCarrito.appendChild(bottonBorrar);
   });
-
 }
-
 
 function cantidadProducts() {
   let totalItems = 0;
@@ -203,12 +196,11 @@ function eliminarProducto(product) {
   carritoCompras.splice(indexDelete, 1);
   localStorage.setItem("carritoCompras", JSON.stringify(carritoCompras));
   total.textContent = 0;
-  cantidadProductos.textContent=""
+  cantidadProductos.textContent = "";
   pintarCarrito();
   subtotalCompra();
-  
-  
 }
+
 
 function subtotalCompra() {
   subtotal = carritoCompras.reduce(
@@ -218,42 +210,45 @@ function subtotalCompra() {
   return subtotal;
 }
 
-
-
 function calcularTotal() {
   if (subtotal !== 0) {
     if (subtotal >= 300) {
-      swal({ title: "Tu compra incluye envio", icon: "success" })
-    
+      swal({
+        title: "Tu compra incluye envio",
+        text: `El costo total de tu compra es ${subtotal}`,
+        icon: "success",
+      });
+    } else {
+      swal({
+        title: "Su compra no incluye envio",
+        text: `Se agregara un costo de envio de $ 100 a cualquier lugar de la Republica Mexicana,
+      El costo total es de ${(subtotal = subtotal + 100)}`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      }).then((willDelete) => {
+        if (willDelete) {
+          swal("Compra Confirmada", {
+            icon: "success",
+          });
+        } else {
+          swal("Compra cancelada");
+        }
+      });
     }
-    else{
-      (swal({
-      title: "La compra actual no incluye envio gratis",
-      text: "Se agregar un costo de envio de $100 a cualquier lugar de la Republica Mexicana",
-      icon: "warning"
-    }))
-     subtotal= subtotal + 100
-     
-    }
-} 
-else {
-    swal({ title: "No tienes agregados productos", icon: "warning" })
-    
+  } else {
+    swal({ title: "No tienes agregados productos", icon: "warning" });
   }
-  
- 
+
   total.textContent = `Total de ${subtotal}`;
   console.log(`Total de su compra: ${subtotal}`);
   console.log(`cantidad de Articulos comprados ${carritoCompras.length}`);
-  borrarCarrito()
+  borrarCarrito();
 }
-
-
-
 
 function borrarCarrito() {
   carritoCompras = [];
- 
+
   total.textContent = 0;
 
   cantidadProductos.textContent = 0;
